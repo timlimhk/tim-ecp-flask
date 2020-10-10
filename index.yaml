@@ -1,13 +1,23 @@
 apiVersion: v1
 entries:
+  tef:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2020-10-10T15:22:45.7156587+11:00"
+    description: A Helm chart for Kubernetes
+    digest: 914223c504c40ecc8a2084446504be5b2a85ae06f5cb337e1837a10658a70cd6
+    name: tef
+    urls:
+    - https://timlimhk.github.io/helm-chart/tef-0.1.0.tgz
+    version: 0.1.0
   tim-ecp-flask:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2020-10-09T19:44:15.1991947+11:00"
+    created: "2020-10-10T15:22:45.7186562+11:00"
     description: A Helm chart for Kubernetes
     digest: c82805d5ee5abe61fa46114dc478acd3b91306d356a373aa0f5b33e14eb30ee7
     name: tim-ecp-flask
     urls:
     - https://timlimhk.github.io/helm-chart/tim-ecp-flask-0.1.0.tgz
     version: 0.1.0
-generated: "2020-10-09T19:44:15.1831568+11:00"
+generated: "2020-10-10T15:22:45.7126413+11:00"
