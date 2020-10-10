@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  tim-ecp-flask:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2020-10-09T19:44:15.1991947+11:00"
+    description: A Helm chart for Kubernetes
+    digest: c82805d5ee5abe61fa46114dc478acd3b91306d356a373aa0f5b33e14eb30ee7
+    name: tim-ecp-flask
+    urls:
+    - https://timlimhk.github.io/helm-chart/tim-ecp-flask-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-10-09T19:44:15.1831568+11:00"
