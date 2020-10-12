@@ -1,6 +1,7 @@
 version: '1.0'
 stages:
 - checkout
+- prepare
 - build
 - unit_test
 - push
@@ -16,6 +17,7 @@ steps:
     repo: 'timlimhk/tim-ecp-flask'
     revision: 'master'
     git: github-1
+
   prepare_env_vars:
     title: 'Preparing environment variables...'
     stage: prepare
@@ -24,6 +26,7 @@ steps:
       - source /get-token/get-gh-token.sh
       - cf_export GITHUB_TOKEN
       - cf_export INSTALLER_VERSION=$(cat version)
+
   build_my_app:
     title: Building Python flask Docker Image
     type: build
@@ -33,12 +36,14 @@ steps:
     tag: 'latest'
     dockerfile: Dockerfile
     disable_push: true
+
   my_unit_tests:
     title: Running Unit tests
-    stage: unittest
+    stage: unit_test
     image: '${{build_my_app}}'
     commands:
       - pytest -k unit /test
+
   push_to_my_registry:
     stage: 'push'
     type: push
@@ -47,6 +52,7 @@ steps:
     tag: 'latest'
     registry: dk-repos
     image_name: timlimhk/tim-ecp-flask
+
   submodules_init:
     title: "Initializing cf-helm submodule"
     stage: prepare
@@ -89,6 +95,7 @@ steps:
       kube_context: docker-desktop
       #chart_repo_url: 'cm://h.cfcr.io/anna-codefresh/default'
       #kube_context: my-demo-k8s-cluster
+
   deploy:
     type: helm
     stage: deploy
@@ -105,7 +112,8 @@ steps:
         - 'image_tag=multi-stage'
         - 'replicaCount=1'
         - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
-  my_unit_tests:
+
+  my_e2e_tests:
     title: Running E2E tests
     stage: e2e_test
     image: '${{build_my_app}}'
