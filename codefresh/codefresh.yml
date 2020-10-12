@@ -23,9 +23,12 @@ steps:
     stage: prepare
     image: codefreshio/ci-helpers
     commands:
-      - source /get-token/get-gh-token.sh
-      - cf_export GITHUB_TOKEN
-      - cf_export INSTALLER_VERSION=$(cat version)
+      - ls -lR .
+      - source ./codefresh/set-env.sh
+      - cf_export git_commit_sha
+      - cf_export version
+      - cf_export service_port
+      - cf_export log_level
 
   build_my_app:
     title: Building Python flask Docker Image
@@ -42,7 +45,7 @@ steps:
     stage: unit_test
     image: '${{build_my_app}}'
     commands:
-      - pytest -k unit /test
+      - pytest -k unit ./test
 
   push_to_my_registry:
     stage: 'push'
@@ -53,16 +56,6 @@ steps:
     registry: dk-repos
     image_name: timlimhk/tim-ecp-flask
 
-  submodules_init:
-    title: "Initializing cf-helm submodule"
-    stage: prepare
-    image: codefreshio/ci-helpers
-    commands:
-      - mkdir -p ~/.ssh
-      - echo $SSH_KEY | base64 -d > ~/.ssh/id_rsa && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-      - chmod 600 ~/.ssh/id_rsa
-      - git submodule update --init
-
   create_git_tag:
     image: codefreshio/ci-helpers
     stage: release
@@ -72,17 +65,6 @@ steps:
       branch:
         only: [master]
 
-  release_binaries:
-    title: Create release in Github with the installer CLI
-    image: codefresh/goreleaser:${{GOLANG_VERSION}}
-    stage: release
-    commands:
-      - hack/build.sh
-      - cd cmd/kcfi
-      - goreleaser release -f ../../.goreleaser.yml --rm-dist --skip-validate
-    when:
-      branch:
-        only: [master]
   store:
     title: Storing Helm Chart
     type: helm
@@ -118,4 +100,4 @@ steps:
     stage: e2e_test
     image: '${{build_my_app}}'
     commands:
-      - pytest -k e2e /test
+      - pytest -k e2e ./test
