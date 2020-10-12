@@ -1,0 +1,113 @@
+version: '1.0'
+stages:
+- checkout
+- build
+- unit_test
+- push
+- store
+- release
+- deploy
+- e2e_test
+steps:
+  main_clone:
+    title: Cloning main repository...
+    type: git-clone
+    stage: checkout
+    repo: 'timlimhk/tim-ecp-flask'
+    revision: 'master'
+    git: github-1
+  prepare_env_vars:
+    title: 'Preparing environment variables...'
+    stage: prepare
+    image: codefreshio/ci-helpers
+    commands:
+      - source /get-token/get-gh-token.sh
+      - cf_export GITHUB_TOKEN
+      - cf_export INSTALLER_VERSION=$(cat version)
+  build_my_app:
+    title: Building Python flask Docker Image
+    type: build
+    stage: build
+    image_name: timlimhk/tim-ecp-flask
+    working_directory: '.'
+    tag: 'latest'
+    dockerfile: Dockerfile
+    disable_push: true
+  my_unit_tests:
+    title: Running Unit tests
+    stage: unittest
+    image: '${{build_my_app}}'
+    commands:
+      - pytest -k unit /test
+  push_to_my_registry:
+    stage: 'push'
+    type: push
+    title: Pushing to a registry
+    candidate: ${{build_my_app}}
+    tag: 'latest'
+    registry: dk-repos
+    image_name: timlimhk/tim-ecp-flask
+  submodules_init:
+    title: "Initializing cf-helm submodule"
+    stage: prepare
+    image: codefreshio/ci-helpers
+    commands:
+      - mkdir -p ~/.ssh
+      - echo $SSH_KEY | base64 -d > ~/.ssh/id_rsa && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - chmod 600 ~/.ssh/id_rsa
+      - git submodule update --init
+
+  create_git_tag:
+    image: codefreshio/ci-helpers
+    stage: release
+    commands:
+      - git tag ${INSTALLER_VERSION}
+    when:
+      branch:
+        only: [master]
+
+  release_binaries:
+    title: Create release in Github with the installer CLI
+    image: codefresh/goreleaser:${{GOLANG_VERSION}}
+    stage: release
+    commands:
+      - hack/build.sh
+      - cd cmd/kcfi
+      - goreleaser release -f ../../.goreleaser.yml --rm-dist --skip-validate
+    when:
+      branch:
+        only: [master]
+  store:
+    title: Storing Helm Chart
+    type: helm
+    stage: store
+    working_directory: .
+    arguments:
+      action: push
+      chart_name: charts
+      chart_repo: helm-repos
+      kube_context: docker-desktop
+      #chart_repo_url: 'cm://h.cfcr.io/anna-codefresh/default'
+      #kube_context: my-demo-k8s-cluster
+  deploy:
+    type: helm
+    stage: deploy
+    working_directory: .
+    arguments:
+      action: install
+      chart_name: charts
+      release_name: tim-ecp-flask
+      helm_version: 3.0.2
+      kube_context: my-demo-k8s-cluster
+      custom_values:
+        - 'buildID=${{CF_BUILD_ID}}'
+        - 'image_pullPolicy=Always'
+        - 'image_tag=multi-stage'
+        - 'replicaCount=1'
+        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
+  my_unit_tests:
+    title: Running E2E tests
+    stage: e2e_test
+    image: '${{build_my_app}}'
+    commands:
+      - pytest -k e2e /test
