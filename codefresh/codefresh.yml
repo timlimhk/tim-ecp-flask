@@ -5,7 +5,7 @@ stages:
 - build
 - unit_test
 - push
-- store
+#- store
 #- release
 - deploy
 - e2e_test
@@ -38,7 +38,7 @@ steps:
     working_directory: '.'
     tag: 'latest'
     dockerfile: Dockerfile
-    disable_push: true
+#    disable_push: true
 
   my_unit_tests:
     title: Running Unit tests
@@ -70,19 +70,16 @@ steps:
 #        only: [master]
 
   store:
-    title: Storing Helm Chart
-    fail_fast: false
+    title: Storing Helm chart
     type: helm
-    stage: store
+    stage: deploy
     working_directory: .
     arguments:
       action: push
       chart_name: charts/tim-ecp-flask
-      kube_context: docker-desktop
-      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
-      #kube_context: my-demo-k8s-cluster
-
-  deploy:
+      helm_version: 3.0.2
+      kube_context: 'docker-desktop'
+  DeployMyChart:
     type: helm
     stage: deploy
     working_directory: .
@@ -91,13 +88,44 @@ steps:
       chart_name: charts/tim-ecp-flask
       release_name: tim-ecp-flask
       helm_version: 3.0.2
-      kube_context: docker-desktop
+      kube_context: 'docker-desktop'
       custom_values:
-        - 'buildID=${{build_my_app}}'
-        - 'image_pullPolicy=Always'
-        - 'image_tag=multi-stage'
-        - 'replicaCount=1'
-#        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
+      - 'buildID=${{CF_BUILD_ID}}'
+      - 'image_pullPolicy=Always'
+#      - 'repository=r.cfcr.io/kostis-codefresh/my-flask-app'
+      - 'repository=cm://h.cfcr.io/elitecom/default'
+      - 'image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
+      - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'   
+
+#  store:
+#    title: Storing Helm Chart
+#    fail_fast: false
+#    type: helm
+#    stage: store
+#    working_directory: .
+#    arguments:
+#      action: push
+#      chart_name: charts/tim-ecp-flask
+#      kube_context: docker-desktop
+#      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
+#      #kube_context: my-demo-k8s-cluster
+
+#  deploy:
+#    type: helm
+#    stage: deploy
+#    working_directory: .
+#    arguments:
+#      action: install
+#      chart_name: charts/tim-ecp-flask
+#      release_name: tim-ecp-flask
+#      helm_version: 3.0.2
+#      kube_context: docker-desktop
+##      custom_values:
+##        - 'buildID=${{CF_BUILD_ID}}'
+##        - 'image_pullPolicy=Always'
+##        - 'image_tag=multi-stage'
+##        - 'replicaCount=1'
+##        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
 
   my_e2e_tests:
     title: Running E2E tests
@@ -105,9 +133,6 @@ steps:
     stage: e2e_test
     image: '${{build_my_app}}'
     commands:
-      - pwd
-      - ls -Rl .
-      - df -h
       - pip install -e .
       - pytest -k e2e /tests
 
