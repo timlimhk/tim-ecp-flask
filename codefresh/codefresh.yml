@@ -17,7 +17,7 @@ steps:
     stage: checkout
     repo: 'timlimhk/tim-ecp-flask'
     revision: 'master'
-    git: github-1
+    git: github
 
   prepare_env_vars:
     title: 'Preparing environment variables...'
