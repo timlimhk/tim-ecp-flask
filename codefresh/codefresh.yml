@@ -69,33 +69,34 @@ steps:
 #      branch:
 #        only: [master]
 
-  store:
-    title: Storing Helm chart
-    type: helm
-    stage: deploy
-    working_directory: .
-    arguments:
-      action: push
-      chart_name: charts/tim-ecp-flask
-      helm_version: 3.0.2
-      kube_context: 'docker-desktop'
+#  store:
+#    title: Storing Helm chart
+#    type: helm
+#    stage: deploy
+#    working_directory: .
+#    arguments:
+#      action: push
+#      chart_name: charts/tim-ecp-flask
+#      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
+#      helm_version: 3.0.2
+#      kube_context: 'docker-desktop'
   DeployMyChart:
     type: helm
     stage: deploy
-    working_directory: .
+    working_directory: ./tim-ecp-flask
     arguments:
       action: install
       chart_name: charts/tim-ecp-flask
       release_name: tim-ecp-flask
       helm_version: 3.0.2
       kube_context: 'docker-desktop'
-      custom_values:
-      - 'buildID=${{CF_BUILD_ID}}'
-      - 'image_pullPolicy=Always'
-#      - 'repository=r.cfcr.io/kostis-codefresh/my-flask-app'
-      - 'repository=cm://h.cfcr.io/elitecom/default'
-      - 'image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
-      - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'   
+#      custom_values:
+#      - 'buildID=${{CF_BUILD_ID}}'
+#      - 'image_pullPolicy=Always'
+##      - 'repository=r.cfcr.io/kostis-codefresh/my-flask-app'
+#      - 'repository=h.cfcr.io/elitecom/tim-ecp-flask'
+#      - 'image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
+#      - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'   
 
 #  store:
 #    title: Storing Helm Chart
