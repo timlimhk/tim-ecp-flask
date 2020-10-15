@@ -4,7 +4,7 @@ stages:
 - prepare
 - build
 #- unit_test
-- push
+#- push
 #- store
 #- release
 - deploy
