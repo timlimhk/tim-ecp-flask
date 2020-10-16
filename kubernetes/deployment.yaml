@@ -4,6 +4,7 @@ metadata:
   labels:
     app: tim-ecp-flask
   name: tim-ecp-flask
+  namespace: codefresh
 spec:
   replicas: 1
   selector:
@@ -16,11 +17,17 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - image: timlimhk/flask_webapp:0.3
+      - image: timlimhk/tim-ecp-flask:latest
         name: tim-ecp-flask
         env:
-        - name: tim-ecp-flask
-          value: "app.py"
+        - name: service_port
+          value: "5000"
+        - name: log_level
+          value: "INFO"
+        - name: git_commit_sha
+          value: "9898989"
+        - name: version
+          value: "1.0.3"
         # Change to development to enable debug mode
         - name: FLASK_ENV
           value: "development"
@@ -52,6 +59,7 @@ metadata:
   name: tim-ecp-flask
   labels:
     app: tim-ecp-flask
+  namespace: codefresh
 spec:
   ports:
   - port: 5000
@@ -61,18 +69,23 @@ spec:
   selector:
     app: tim-ecp-flask
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tim-ecp-flask
+  namespace: codefresh
   annotations:
     # Disables http redirect to https
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - http:
+  - host: tim-ecp-flask.info
+    http:
       paths:
-      - path: /
-        backend:
-          serviceName: tim-ecp-flask
-          servicePort: 5000
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: tim-ecp-flask
+              port:
+                number: 5000
