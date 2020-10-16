@@ -5,7 +5,7 @@ metadata:
   labels:
     run: tim-ecp-flask
   name: tim-ecp-flask
-  namespace: default
+  namespace: codefresh
   resourceVersion: "3887"
   selfLink: /api/v1/namespaces/default/services/tim-ecp-flask
   uid: 9605219c-0e96-11e9-86b1-080027785a78

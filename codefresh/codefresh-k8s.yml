@@ -29,6 +29,7 @@ steps:
       - cf_export version
       - cf_export service_port
       - cf_export log_level
+      - env
 
   build_my_app:
     title: Building Python flask Docker Image
@@ -36,8 +37,7 @@ steps:
     stage: build
     image_name: timlimhk/tim-ecp-flask
     working_directory: '.'
-    tag: ${{CF_BRANCH_TAG_NORMALIZED}}
-#    tag: 'latest'
+    tag: 'latest'
     dockerfile: Dockerfile
     registry: dk-repos
 #    disable_push: true
@@ -66,9 +66,16 @@ steps:
     title: deploying to cluster
     type: deploy
     kind: kubernetes 
-    cluster:  docker-desktop
-    namespace: codefresh-1
-    service: tim-ecp-flask
+    cluster:  minikube
+    namespace: codefresh
+#    service: tim-ecp-flask
+    file_path: ./kubernetes/deployment.yaml
+#    candidate:
+#      image: ${{build_my_app}}
+#      registry: dk-repos
+    timeout: '150'
+
+
 
 
 #  create_git_tag:
@@ -91,7 +98,7 @@ steps:
 #      chart_name: charts/tim-ecp-flask
 #      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
 #      helm_version: 3.0.2
-#      kube_context: 'docker-desktop'
+#      kube_context: 'minikube'
 #  DeployMyChart:
 #    type: helm
 #    stage: deploy
@@ -101,7 +108,7 @@ steps:
 #      chart_name: charts/tim-ecp-flask
 #      release_name: tim-ecp-flask
 #      helm_version: 3.0.2
-#      kube_context: 'docker-desktop'
+#      kube_context: 'minikube'
 #      custom_values:
 #      - 'buildID=${{CF_BUILD_ID}}'
 #      - 'image_pullPolicy=Always'
@@ -119,7 +126,7 @@ steps:
 #    arguments:
 #      action: push
 #      chart_name: charts/tim-ecp-flask
-#      kube_context: docker-desktop
+#      kube_context: minikube
 #      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
 #      #kube_context: my-demo-k8s-cluster
 
@@ -132,7 +139,7 @@ steps:
 #      chart_name: charts/tim-ecp-flask
 #      release_name: tim-ecp-flask
 #      helm_version: 3.0.2
-#      kube_context: docker-desktop
+#      kube_context: minikube
 ##      custom_values:
 ##        - 'buildID=${{CF_BUILD_ID}}'
 ##        - 'image_pullPolicy=Always'
