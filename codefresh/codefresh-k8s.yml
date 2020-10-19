@@ -19,18 +19,18 @@ steps:
     revision: 'master'
     git: github
 
-  prepare_env_vars:
-    title: 'Preparing environment variables...'
-    stage: prepare
-    image: codefreshio/ci-helpers
-    commands:
-      - source ./codefresh/set-env.sh
-      - cf_export git_commit_sha
-      - cf_export version
-      - cf_export service_port
-      - cf_export log_level
-      - env
-
+#  prepare_env_vars:
+#    title: 'Preparing environment variables...'
+#    stage: prepare
+#    image: codefreshio/ci-helpers
+#    commands:
+#      - source ./codefresh/set-env.sh
+#      - cf_export git_commit_sha
+#      - cf_export version
+#      - cf_export service_port
+#      - cf_export log_level
+#      - env
+#
   build_my_app:
     title: Building Python flask Docker Image
     type: build

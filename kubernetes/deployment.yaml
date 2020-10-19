@@ -4,7 +4,7 @@ metadata:
   labels:
     app: tim-ecp-flask
   name: tim-ecp-flask
-  namespace: codefresh
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -59,7 +59,7 @@ metadata:
   name: tim-ecp-flask
   labels:
     app: tim-ecp-flask
-  namespace: codefresh
+  namespace: default
 spec:
   ports:
   - port: 5000
@@ -73,7 +73,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tim-ecp-flask
-  namespace: codefresh
+  namespace: default
   annotations:
     # Disables http redirect to https
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
