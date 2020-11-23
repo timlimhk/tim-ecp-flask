@@ -61,34 +61,40 @@ metadata:
     app: tim-ecp-flask
   namespace: default
 spec:
+  clusterIP: 10.3.250.188
+  externalTrafficPolicy: Cluster
   ports:
-  - port: 5000
+  - nodePort: 30888
+    port: 5000
     protocol: TCP
     name: http
     targetPort: 5000
   selector:
     app: tim-ecp-flask
----
+  sessionAffinity: None
+  type: LoadBalancer
+#---
 #apiVersion: networking.k8s.io/v1  # work for minikube
-apiVersion: networking.k8s.io/v1beta1  # for EKS
-kind: Ingress
-metadata:
-  name: tim-ecp-flask
-  namespace: default
-  annotations:
-    # Disables http redirect to https
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-spec:
-  rules:
-  - host: tim-ecp-flask.info
-    http:
-      paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            serviceName: tim-ecp-flask # EKS
-            servicePort: 5000  #EKS
-#            service:
-#              name: tim-ecp-flask
-#              port:
-#                number: 5000
+#apiVersion: networking.k8s.io/v1beta1  # for EKS
+#apiVersion: networking.k8s.io/v1  # work for GKE 
+#kind: Ingress
+#metadata:
+#  name: tim-ecp-flask
+#  namespace: default
+#  annotations:
+#    # Disables http redirect to https
+#    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#spec:
+#  rules:
+##  - host: tim-ecp-flask.info
+#  - http:
+#     paths:
+#     - path: /
+#       pathType: Prefix
+#       backend:
+#         serviceName: tim-ecp-flask # EKS
+#         servicePort: 5000  #EKS
+##            service:
+##              name: tim-ecp-flask
+##              port:
+##                number: 5000

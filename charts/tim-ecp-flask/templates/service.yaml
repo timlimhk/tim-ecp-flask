@@ -5,13 +5,14 @@ metadata:
   labels:
     run: tim-ecp-flask
   name: tim-ecp-flask
-  namespace: codefresh
+  namespace: default
   resourceVersion: "3887"
   selfLink: /api/v1/namespaces/default/services/tim-ecp-flask
   uid: 9605219c-0e96-11e9-86b1-080027785a78
 spec:
-  clusterIP: 10.96.0.88   # minikube
+#  clusterIP: 10.96.0.88   # minikube
 #  clusterIP: 172.20.0.88  #eks cluster
+  clusterIP: 10.3.252.106  # GKE Cluster
   externalTrafficPolicy: Cluster
   ports:
   - nodePort: 31824
