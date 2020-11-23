@@ -73,7 +73,7 @@ steps:
 #    candidate:
 #      image: ${{build_my_app}}
 #      registry: dk-repos
-    timeout: '150'
+    timeout: '600'
 
 
 

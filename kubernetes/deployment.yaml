@@ -69,7 +69,8 @@ spec:
   selector:
     app: tim-ecp-flask
 ---
-apiVersion: networking.k8s.io/v1
+#apiVersion: networking.k8s.io/v1  # work for minikube
+apiVersion: networking.k8s.io/v1beta1  # for EKS
 kind: Ingress
 metadata:
   name: tim-ecp-flask
@@ -85,7 +86,9 @@ spec:
         - path: /
           pathType: Prefix
           backend:
-            service:
-              name: tim-ecp-flask
-              port:
-                number: 5000
+            serviceName: tim-ecp-flask # EKS
+            servicePort: 5000  #EKS
+#            service:
+#              name: tim-ecp-flask
+#              port:
+#                number: 5000
