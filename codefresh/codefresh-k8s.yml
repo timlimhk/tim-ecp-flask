@@ -68,12 +68,12 @@ steps:
     kind: kubernetes 
     cluster:  devops-catalog@doc-cf-gke
     namespace: default
-#    service: tim-ecp-flask
-    file_path: ./kubernetes/deployment.yaml
-#    candidate:
-#      image: ${{build_my_app}}
-#      registry: dk-repos
-    timeout: '600'
+    service: tim-ecp-flask
+#   file_path: ./kubernetes/deployment.yaml
+    candidate:
+      image: ${{build_my_app}}
+      registry: dk-repos
+    timeout: '300'
 
 
 
