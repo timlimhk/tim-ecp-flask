@@ -70,7 +70,7 @@ steps:
       - /cf-deploy-kubernetes kubernetes/service.yaml  
     environment:
       - KUBECONTEXT=devops-catalog@doc-cf-gke
-      - KUBERNETES_NAMESPACE=my-default
+      - KUBERNETES_NAMESPACE=default
       - PULL_SECRET=codefresh-generated-docker.io-dk-repos-default
 
 # deploy_to_k8:
