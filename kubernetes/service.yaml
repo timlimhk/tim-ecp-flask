@@ -4,10 +4,10 @@ metadata:
   name: tim-ecp-flask
   labels:
     app: tim-ecp-flask
-  namespace: default
+# namespace: default
 spec:
 #  clusterIP: 10.3.250.188
-  externalTrafficPolicy: Cluster
+# externalTrafficPolicy: Cluster
   ports:
 # - nodePort: 30888
   - port: 5000
@@ -16,5 +16,5 @@ spec:
     targetPort: 5000
   selector:
     app: tim-ecp-flask
-  sessionAffinity: None
+# sessionAffinity: None
   type: LoadBalancer
