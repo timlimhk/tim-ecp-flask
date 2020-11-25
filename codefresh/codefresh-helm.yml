@@ -119,7 +119,8 @@ steps:
     working_directory: .
     arguments:
       action: install
-      chart_name: charts/tim-ecp-flask
+      chart_name: tim-ecp-flask
+#     chart_name: charts/tim-ecp-flask
       release_name: tim-ecp-flask
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
