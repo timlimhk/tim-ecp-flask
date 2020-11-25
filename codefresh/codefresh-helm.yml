@@ -113,16 +113,16 @@ steps:
       chart_repo_url: cm://h.cfcr.io/elitecom/default
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
-#  deploy:
-#    type: helm
-#    stage: deploy
-#    working_directory: .
-#    arguments:
-#      action: install
-#      chart_name: charts/tim-ecp-flask
-#      release_name: tim-ecp-flask
-#      helm_version: 3.0.2
-#      kube_context: minikube
+  deploy:
+    type: helm
+    stage: deploy
+    working_directory: .
+    arguments:
+      action: install
+      chart_name: charts/tim-ecp-flask
+      release_name: tim-ecp-flask
+      helm_version: 3.0.2
+      kube_context: devops-catalog@doc-cf-gke
 ##      custom_values:
 ##        - 'buildID=${{CF_BUILD_ID}}'
 ##        - 'image_pullPolicy=Always'
