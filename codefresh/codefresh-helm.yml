@@ -110,7 +110,7 @@ steps:
     arguments:
       action: push
       chart_name: charts/tim-ecp-flask
-#      chart_repo_url: cm://h.cfcr.io/elitecom/default
+      chart_repo_url: cm://h.cfcr.io/elitecom/default
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
 #  deploy:
