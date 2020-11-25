@@ -36,8 +36,7 @@ steps:
     type: build
     stage: build
     image_name: timlimhk/tim-ecp-flask
-#    working_directory: '.'
-    working_directory: ./tim-ecp-flask
+    working_directory: '.'
     tag: 'latest'
     dockerfile: Dockerfile
     registry: dk-repos
