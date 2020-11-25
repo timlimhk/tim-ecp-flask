@@ -5,18 +5,18 @@ metadata:
   labels:
     run: tim-ecp-flask
   name: tim-ecp-flask
-  namespace: default
-  resourceVersion: "3887"
-  selfLink: /api/v1/namespaces/default/services/tim-ecp-flask
-  uid: 9605219c-0e96-11e9-86b1-080027785a78
+# namespace: default
+# resourceVersion: "3887"
+#  selfLink: /api/v1/namespaces/default/services/tim-ecp-flask
+# uid: 9605219c-0e96-11e9-86b1-080027785a78
 spec:
 #  clusterIP: 10.96.0.88   # minikube
 #  clusterIP: 172.20.0.88  #eks cluster
-  clusterIP: 10.3.252.106  # GKE Cluster
+#  clusterIP: 10.3.252.106  # GKE Cluster
   externalTrafficPolicy: Cluster
   ports:
-  - nodePort: 31824
-    port: 5000
+#  - nodePort: 31824
+  - port: 5000
     protocol: TCP
     targetPort: 5000
   selector:

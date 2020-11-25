@@ -36,11 +36,41 @@ steps:
     type: build
     stage: build
     image_name: timlimhk/tim-ecp-flask
-    working_directory: '.'
+#    working_directory: '.'
+    working_directory: ./tim-ecp-flask
     tag: 'latest'
     dockerfile: Dockerfile
     registry: dk-repos
 #    disable_push: true
+  store:
+    title: Storing Helm chart
+    type: helm
+    fail_fast: false
+    stage: deploy
+    working_directory: ./tim-ecp-flask
+    arguments:
+      action: push
+      chart_name: charts/tim-ecp-flask
+      chart_repo_url: cm://h.cfcr.io/elitecom/default
+      helm_version: 3.0.2
+      kube_context: devops-catalog@doc-cf-gke
+  deploy:
+    type: helm
+    stage: deploy
+    working_directory: ./tim-ecp-flask
+    arguments:
+      action: install
+      chart_name: charts/tim-ecp-flask
+      release_name: tim-ecp-flask
+      helm_version: 3.0.2
+      kube_context: devops-catalog@doc-cf-gke
+##      custom_values:
+##        - 'buildID=${{CF_BUILD_ID}}'
+##        - 'image_pullPolicy=Always'
+##        - 'image_tag=multi-stage'
+##        - 'replicaCount=1'
+##        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
+#
 
 #  my_unit_tests:
 #    title: Running Unit tests
@@ -101,36 +131,6 @@ steps:
 #      branch:
 #        only: [master]
 
-  store:
-    title: Storing Helm chart
-    type: helm
-    fail_fast: false
-    stage: deploy
-    working_directory: .
-    arguments:
-      action: push
-      chart_name: charts/tim-ecp-flask
-      chart_repo_url: cm://h.cfcr.io/elitecom/default
-      helm_version: 3.0.2
-      kube_context: devops-catalog@doc-cf-gke
-  deploy:
-    type: helm
-    stage: deploy
-    working_directory: .
-    arguments:
-      action: install
-      chart_name: tim-ecp-flask
-#     chart_name: charts/tim-ecp-flask
-      release_name: tim-ecp-flask
-      helm_version: 3.0.2
-      kube_context: devops-catalog@doc-cf-gke
-##      custom_values:
-##        - 'buildID=${{CF_BUILD_ID}}'
-##        - 'image_pullPolicy=Always'
-##        - 'image_tag=multi-stage'
-##        - 'replicaCount=1'
-##        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
-#
 #  DeployMyChart:
 #    type: helm
 #    stage: deploy
