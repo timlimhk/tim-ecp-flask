@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - image: timlimhk/tim-ecp-flask:latest
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         name: tim-ecp-flask
         ports:
         - containerPort: 5000

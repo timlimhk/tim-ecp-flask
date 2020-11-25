@@ -23,5 +23,5 @@ spec:
     run: tim-ecp-flask
   sessionAffinity: None
   type: LoadBalancer
-status:
-  loadBalancer: {}
+# status:
+#   loadBalancer: {}

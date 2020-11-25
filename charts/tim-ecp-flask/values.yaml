@@ -19,7 +19,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 service:
-  type: NodePort
+  type: LoadBalancer
   port: 5000
   internalPort: 5000
 
