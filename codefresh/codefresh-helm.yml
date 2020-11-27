@@ -16,7 +16,7 @@ steps:
     title: Cloning main repository...
     type: git-clone
     stage: checkout
-    repo: 'timlimhk/tim-ecp-flask'
+    repo: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     revision: "${{CF_BRANCH}}"
     git: github
 
@@ -36,12 +36,12 @@ steps:
     title: Building Python flask Docker Image
     type: build
     stage: build
-    image_name: timlimhk/tim-ecp-flask
+    image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     working_directory: '.'
-    tag: 'latest'
+    tag:  ${{CF_SHORT_REVISION}}
     dockerfile: Dockerfile
-    registry: dk-repos
-#    disable_push: true
+#    registry: dk-repos
+    disable_push: true
 #
   push_to_my_registry:
     stage: 'push'
@@ -50,9 +50,9 @@ steps:
     title: Pushing to a registry
     candidate: ${{build_my_app}}
 #    tag: 'latest'
-    tag: ${{CF_BRANCH_TAG_NORMALIZED}}
+    tag: ${{CF_SHORT_REVISION}}
     registry: dk-repos
-    image_name: timlimhk/tim-ecp-flask
+    image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
 
 #  my_unit_tests:
 #    title: Running Unit tests
@@ -69,21 +69,20 @@ steps:
     type: helm
     fail_fast: false
     stage: store
-    working_directory: ./tim-ecp-flask
+    working_directory: ./${{CF_REPO_OWNER}}
     arguments:
       action: push
-      chart_name: charts/tim-ecp-flask
+      chart_name: charts/${{CF_REPO_NAME}}
       chart_repo_url: cm://h.cfcr.io/elitecom/default
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
-      #
 
   create_git_tag:
     image: codefreshio/ci-helpers
     fail_fast: false
     stage: release
     commands:
-      - git tag ${INSTALLER_VERSION}
+      - git tag ${{CF_SHORT_REVISION}}
     when:
       branch:
         only: [master]
