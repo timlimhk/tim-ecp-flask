@@ -7,9 +7,9 @@ metadata:
     run: tim-ecp-flask
   name: tim-ecp-flask
   namespace: default
-  resourceVersion: "3857"
-  selfLink: /apis/apps/v1/namespaces/default/deployments/tim-ecp-flask
-  uid: 92937267-0e96-11e9-86b1-080027785a78
+#  resourceVersion: "3857"
+# selfLink: /apis/apps/v1/namespaces/default/deployments/tim-ecp-flask
+# uid: 92937267-0e96-11e9-86b1-080027785a78
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -29,7 +29,8 @@ spec:
         run: tim-ecp-flask
     spec:
       containers:
-      - image: timlimhk/tim-ecp-flask:latest
+#      - image: timlimhk/tim-ecp-flask:latest
+      - image: ${{CF_REPOS_OWNER}}/tim-ecp-flask:${{CF_REPO_NAME}}
         imagePullPolicy: Always
         name: tim-ecp-flask
         ports:
