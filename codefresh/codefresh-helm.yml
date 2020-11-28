@@ -76,9 +76,11 @@ steps:
     arguments:
       action: push
       chart_name: charts/${{CF_REPO_NAME}}
-      chart_repo_url: cm://h.cfcr.io/elitecom/default
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
+#     chart_repo_url: https://timlimhk.github.io/helm-chart/
+# Pushed successfully to CF HELM repos
+#     chart_repo_url: cm://h.cfcr.io/elitecom/default
 
 # create_git_tag:
 #   image: codefreshio/ci-helpers
@@ -115,25 +117,25 @@ steps:
 #       - approved
 #
 # Below deployment has been verified with GKE
-  deploy:
-    type: helm
-    stage: deploy
-    working_directory: ./tim-ecp-flask
-    arguments:
-      action: install
-      chart_name: charts/tim-ecp-flask
-      release_name: tim-ecp-flask
-      helm_version: 3.0.2
-      kube_context: devops-catalog@doc-cf-gke
-      custom_values:
-        - 'buildID=${{CF_BUILD_ID}}'
-        - 'image_pullPolicy=Always'
-        - 'image_tag=1.0.0'
-        - 'replicaCount=1'
-        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
-    when:
-      branch:
-        only: [master]
+#  deploy:
+#    type: helm
+#    stage: deploy
+#    working_directory: ./tim-ecp-flask
+#    arguments:
+#      action: install
+#      chart_name: charts/tim-ecp-flask
+#      release_name: tim-ecp-flask
+#      helm_version: 3.0.2
+#      kube_context: devops-catalog@doc-cf-gke
+#      custom_values:
+#        - 'buildID=${{CF_BUILD_ID}}'
+#        - 'image_pullPolicy=Always'
+#        - 'image_tag=1.0.0'
+#        - 'replicaCount=1'
+#        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
+#    when:
+#      branch:
+#        only: [master]
 
 # Below deployment has been verified with GKE
 # But, causes K8s to crash soon after,  25 Nov 2020
