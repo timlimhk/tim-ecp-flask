@@ -1,22 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: 2019-01-02T13:59:07Z
-  generation: 1
-  labels:
-    run: {{ .Chart.Name }}
   name: {{ .Chart.Name }}
-  namespace: default
-#  resourceVersion: "3857"
-# selfLink: /apis/apps/v1/namespaces/default/deployments/tim-ecp-flask
-# uid: 92937267-0e96-11e9-86b1-080027785a78
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      run: tim-ecp-flask
+      run:  {{ .Chart.Name }}
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -26,17 +18,13 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        run: tim-ecp-flask
+        run:  {{ .Chart.Name }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-#     - image: timlimhk/tim-ecp-flask:latest
-#     - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-#       imagePullPolicy: Always
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-#        name: tim-ecp-flask
-#       name: {{ .Chart.Name }}
+          name: {{ .Chart.Name }}
           ports:
             - containerPort: 5000
               protocol: TCP

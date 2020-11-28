@@ -39,10 +39,7 @@ steps:
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     working_directory: '.'
     tag:  1.0.0
-#    tag:  latest
-#   tag:  ${{CF_SHORT_REVISION}}
     dockerfile: Dockerfile
-#    registry: dk-repos
     disable_push: true
 #
   push_to_my_registry:
@@ -52,8 +49,6 @@ steps:
     title: Pushing to a registry
     candidate: ${{build_my_app}}
     tag:  1.0.0
-#   tag: 'latest'
-#    tag: ${{CF_SHORT_REVISION}}
     registry: dk-repos
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
 
@@ -120,15 +115,15 @@ steps:
   deploy:
     type: helm
     stage: deploy
-    working_directory: ./tim-ecp-flask
+    working_directory: ./${{CF_REPO_NAME}}
     arguments:
       action: install
-      chart_name: charts/tim-ecp-flask
-      release_name: tim-ecp-flask
+      chart_name: charts/${{CF_REPO_NAME}}
+      release_name: ${{CF_REPO_NAME}}
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
       custom_values:
-        - 'buildID=${{CF_BUILD_ID}}'
+        - 'env_git__commit__sha=${{CF_SHORT_REVISION}}'
         - 'image_pullPolicy=Always'
         - 'image_tag=1.0.0'
         - 'replicaCount=1'
@@ -149,66 +144,5 @@ steps:
 #     - KUBECONTEXT=devops-catalog@doc-cf-gke
 #     - KUBERNETES_NAMESPACE=default
 #     - PULL_SECRET=codefresh-generated-docker.io-dk-repos-default
-
-# deploy_to_k8:
-#   title: deploying to cluster
-#   type: deploy
-#   kind: kubernetes 
-#   cluster:  devops-catalog@doc-cf-gke
-#   namespace: default
-#   service: tim-ecp-flask
-#   file_path: ./kubernetes/deployment.yaml
-#   candidate:
-#     image: ${{build_my_app}}
-#     registry: dk-repos
-#   timeout: '300'
-
-
-#  DeployMyChart:
-#    type: helm
-#    stage: deploy
-#    working_directory: ./tim-ecp-flask
-#    arguments:
-#      action: install
-#      chart_name: charts/tim-ecp-flask
-#      release_name: tim-ecp-flask
-#      helm_version: 3.0.2
-#      kube_context: 'minikube'
-#      custom_values:
-#      - 'buildID=${{CF_BUILD_ID}}'
-#      - 'image_pullPolicy=Always'
-##      - 'repository=r.cfcr.io/kostis-codefresh/my-flask-app'
-#      - 'repository=h.cfcr.io/elitecom/tim-ecp-flask'
-#      - 'image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
-#      - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'   
-#  store:
-#    title: Storing Helm Chart
-#    fail_fast: false
-#    type: helm
-#    stage: store
-#    working_directory: .
-#    arguments:
-#      action: push
-#      chart_name: charts/tim-ecp-flask
-#      kube_context: minikube
-#      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
-#      #kube_context: my-demo-k8s-cluster
-
-#  deploy:
-#    type: helm
-#    stage: deploy
-#    working_directory: .
-#    arguments:
-#      action: install
-#      chart_name: charts/tim-ecp-flask
-#      release_name: tim-ecp-flask
-#      helm_version: 3.0.2
-#      kube_context: minikube
-##      custom_values:
-##        - 'buildID=${{CF_BUILD_ID}}'
-##        - 'image_pullPolicy=Always'
-##        - 'image_tag=multi-stage'
-##        - 'replicaCount=1'
-##        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
 
 
