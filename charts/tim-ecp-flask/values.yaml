@@ -11,7 +11,7 @@ env:
   version: 1.0.1
 
 image:
-  repository: nginx
+  repository: timlimhk/tim-ecp-flask
   tag: stable
   pullPolicy: IfNotPresent
 

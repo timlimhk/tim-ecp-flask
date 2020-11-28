@@ -4,8 +4,8 @@ metadata:
   creationTimestamp: 2019-01-02T13:59:07Z
   generation: 1
   labels:
-    run: tim-ecp-flask
-  name: tim-ecp-flask
+    run: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}
   namespace: default
 #  resourceVersion: "3857"
 # selfLink: /apis/apps/v1/namespaces/default/deployments/tim-ecp-flask
@@ -29,10 +29,13 @@ spec:
         run: tim-ecp-flask
     spec:
       containers:
-#      - image: timlimhk/tim-ecp-flask:latest
-      - image: ${{CF_REPOS_OWNER}}/tim-ecp-flask:${{CF_REPO_NAME}}
-        imagePullPolicy: Always
-        name: tim-ecp-flask
+#     - image: timlimhk/tim-ecp-flask:latest
+#      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      - image: "{{ .Values.image.repository }}:latest"
+#       imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+#        name: tim-ecp-flask
+        name: {{ .Chart.Name }}
         ports:
         - containerPort: 5000
           protocol: TCP

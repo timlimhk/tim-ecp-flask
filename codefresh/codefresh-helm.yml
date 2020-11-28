@@ -38,7 +38,8 @@ steps:
     stage: build
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     working_directory: '.'
-    tag:  ${{CF_SHORT_REVISION}}
+    tag:  latest
+#   tag:  ${{CF_SHORT_REVISION}}
     dockerfile: Dockerfile
 #    registry: dk-repos
     disable_push: true
@@ -49,8 +50,8 @@ steps:
     type: push
     title: Pushing to a registry
     candidate: ${{build_my_app}}
-#    tag: 'latest'
-    tag: ${{CF_SHORT_REVISION}}
+    tag: 'latest'
+#    tag: ${{CF_SHORT_REVISION}}
     registry: dk-repos
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
 
@@ -69,7 +70,7 @@ steps:
     type: helm
     fail_fast: false
     stage: store
-    working_directory: ./${{CF_REPO_OWNER}}
+    working_directory: ./${{CF_REPO_NAME}}
     arguments:
       action: push
       chart_name: charts/${{CF_REPO_NAME}}
@@ -77,15 +78,15 @@ steps:
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
 
-  create_git_tag:
-    image: codefreshio/ci-helpers
-    fail_fast: false
-    stage: release
-    commands:
-      - git tag ${{CF_SHORT_REVISION}}
-    when:
-      branch:
-        only: [master]
+# create_git_tag:
+#   image: codefreshio/ci-helpers
+#   fail_fast: false
+#   stage: release
+#   commands:
+#     - git tag ${{CF_SHORT_REVISION}}
+#   when:
+#     branch:
+#       only: [master]
 
 
 #
@@ -125,7 +126,7 @@ steps:
 #      custom_values:
 #        - 'buildID=${{CF_BUILD_ID}}'
 #        - 'image_pullPolicy=Always'
-##        - 'image_tag=multi-stage'
+##        - 'image_tag=${{CF_SHORT_REVISION}}'
 ##        - 'replicaCount=1'
 ##        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
 #    when:
