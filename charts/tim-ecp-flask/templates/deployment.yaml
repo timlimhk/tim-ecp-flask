@@ -29,29 +29,29 @@ spec:
         run: tim-ecp-flask
     spec:
       containers:
+        - name: {{ .Chart.Name }}
 #     - image: timlimhk/tim-ecp-flask:latest
-#      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-      - image: "{{ .Values.image.repository }}:{{ .Chart.appVersion }}"
+#     - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
 #       imagePullPolicy: Always
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 #        name: tim-ecp-flask
-        name: {{ .Chart.Name }}
-        ports:
-        - containerPort: 5000
-          protocol: TCP
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        {{- if .Values.env }}
-        env:
-        {{- range $key, $value := .Values.env }}
-        - name: {{ $key }}
-          value: {{ $value | quote }}
-        {{- end }}
-        {{- end }}
+#       name: {{ .Chart.Name }}
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          {{- if .Values.env }}
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
-status: {}
