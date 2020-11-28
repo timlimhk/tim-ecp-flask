@@ -31,7 +31,7 @@ spec:
       containers:
 #     - image: timlimhk/tim-ecp-flask:latest
 #      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-      - image: "{{ .Values.image.repository }}:latest"
+      - image: "{{ .Values.image.repository }}:{{ .Chart.appVersion }}"
 #       imagePullPolicy: Always
         imagePullPolicy: {{ .Values.image.pullPolicy }}
 #        name: tim-ecp-flask
