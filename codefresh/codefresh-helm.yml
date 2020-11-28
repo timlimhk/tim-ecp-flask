@@ -117,22 +117,22 @@ steps:
 #       - approved
 #
 # Below deployment has been verified with GKE
-#  deploy:
-#    type: helm
-#    stage: deploy
-#    working_directory: ./tim-ecp-flask
-#    arguments:
-#      action: install
-#      chart_name: charts/tim-ecp-flask
-#      release_name: tim-ecp-flask
-#      helm_version: 3.0.2
-#      kube_context: devops-catalog@doc-cf-gke
-#      custom_values:
-#        - 'buildID=${{CF_BUILD_ID}}'
-#        - 'image_pullPolicy=Always'
-#        - 'image_tag=1.0.0'
-#        - 'replicaCount=1'
-#        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
+  deploy:
+    type: helm
+    stage: deploy
+    working_directory: ./tim-ecp-flask
+    arguments:
+      action: install
+      chart_name: charts/tim-ecp-flask
+      release_name: tim-ecp-flask
+      helm_version: 3.0.2
+      kube_context: devops-catalog@doc-cf-gke
+      custom_values:
+        - 'buildID=${{CF_BUILD_ID}}'
+        - 'image_pullPolicy=Always'
+        - 'image_tag=1.0.0'
+        - 'replicaCount=1'
+        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
 #    when:
 #      branch:
 #        only: [master]
