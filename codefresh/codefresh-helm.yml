@@ -76,7 +76,7 @@ steps:
 #     chart_repo_url: https://timlimhk.github.io/helm-chart/
 # Pushed successfully to CF HELM repos only so far
       chart_repo_url: cm://h.cfcr.io/elitecom/default
-      cmd_ps: '--wait --timeout 120'
+      cmd_ps: '--timeout 120'
 
 # create_git_tag:
 #   image: codefreshio/ci-helpers
@@ -129,7 +129,7 @@ steps:
 #        - 'image_tag=1.0.0'
 #        - 'replicaCount=1'
 #        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
-#     cmd_ps: '--timeout 180'
+#     cmd_ps: '--wait --timeout 180'
 ##    when:
 ##      branch:
 ##        only: [master]
