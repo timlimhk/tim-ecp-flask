@@ -73,10 +73,10 @@ steps:
       chart_name: charts/${{CF_REPO_NAME}}
       helm_version: 3.0.2
       kube_context: devops-catalog@doc-cf-gke
-#     chart_repo_url: https://timlimhk.github.io/helm-chart/
 # Pushed successfully to CF HELM repos only so far
       chart_repo_url: cm://h.cfcr.io/elitecom/default
-      cmd_ps: '--timeout 120'
+# Replace below CF_REPO_NAME with your user ID in GITHUb
+#     chart_repo_url: https://${{CF_REPO_NAME}}.github.io/helm-chart/
 
 # create_git_tag:
 #   image: codefreshio/ci-helpers
