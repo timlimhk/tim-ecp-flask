@@ -13,6 +13,4 @@ spec:
     protocol: {{ .Values.service.protocol }}
     targetPort: {{ .Values.service.targetport }}
   selector:
-    {{- include "helm.labels" . | nindent 4 }}
-#   run: {{ .Chart.Name }}
-#  sessionAffinity: None
+    {{- include "helm.selectorLabels" . | nindent 4 }}
