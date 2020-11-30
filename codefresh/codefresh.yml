@@ -3,20 +3,21 @@ stages:
 - checkout
 - prepare
 - build
-- unit_test
+#- unit_test
 - push
-#- store
-#- release
+- store
+- release
 - deploy
-- e2e_test
-- approval
+#- e2e_test
+#- approval
+
 steps:
   main_clone:
     title: Cloning main repository...
     type: git-clone
     stage: checkout
-    repo: 'timlimhk/tim-ecp-flask'
-    revision: 'master'
+    repo: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
+    revision: "${{CF_BRANCH}}"
     git: github
 
   prepare_env_vars:
@@ -29,123 +30,133 @@ steps:
       - cf_export version
       - cf_export service_port
       - cf_export log_level
+      - cf_export KUBE_CONTEXT
+      - cf_export CHART_REPO_URL
+      - cf_export NAMESPACE
+      - env
 
   build_my_app:
     title: Building Python flask Docker Image
     type: build
     stage: build
-    image_name: timlimhk/tim-ecp-flask
+    image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     working_directory: '.'
-    tag: 'latest'
+    tag:  1.0.0
     dockerfile: Dockerfile
-#    disable_push: true
-
-  my_unit_tests:
-    title: Running Unit tests
-    fail_fast: false
-    stage: unit_test
-    image: '${{build_my_app}}'
-    commands:
-      - pip install -e .
-      - pytest -k unit tests
-
+    disable_push: true
+#
   push_to_my_registry:
     stage: 'push'
     fail_fast: false
     type: push
     title: Pushing to a registry
     candidate: ${{build_my_app}}
-    tag: 'latest'
+    tag:  1.0.0
     registry: dk-repos
-    image_name: timlimhk/tim-ecp-flask
+    image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
 
-#  create_git_tag:
-#    image: codefreshio/ci-helpers
+#  my_unit_tests:
+#    title: Running Unit tests
 #    fail_fast: false
-#    stage: release
+#    stage: unit_test
+#    image: '${{build_my_app}}'
 #    commands:
-#      - git tag ${INSTALLER_VERSION}
-#    when:
-#      branch:
-#        only: [master]
+#      - pip install -e .
+#      - pytest -k unit tests
 
-#  store:
-#    title: Storing Helm chart
-#    type: helm
-#    stage: deploy
-#    working_directory: .
-#    arguments:
-#      action: push
-#      chart_name: charts/tim-ecp-flask
-#      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
-#      helm_version: 3.0.2
-#      kube_context: 'docker-desktop'
-  DeployMyChart:
+
+  store:
+    title: Storing Helm chart
+    type: helm
+    fail_fast: false
+    stage: store
+    working_directory: ./${{CF_REPO_NAME}}
+    arguments:
+      action: push
+      chart_name: charts/${{CF_REPO_NAME}}
+      helm_version: 3.0.2
+      kube_context: ${{KUBE_CONTEXT}}
+#     kube_context: devops-catalog@doc-cf-gke
+# Pushed successfully to CF HELM repos only so far
+      chart_repo_url: ${{CHART_REPO_URL}}
+# Replace below CF_REPO_NAME with your user ID in GITHUb
+#     chart_repo_url: https://${{CF_REPO_NAME}}.github.io/helm-chart/
+
+# create_git_tag:
+#   image: codefreshio/ci-helpers
+#   fail_fast: false
+#   stage: release
+#   commands:
+#     - git tag ${{CF_SHORT_REVISION}}
+#   when:
+#     branch:
+#       only: [master]
+
+
+#
+#
+#  my_e2e_tests:
+#    title: Running E2E tests
+#    fail_fast: false
+#    stage: e2e_test
+#    image: '${{build_my_app}}'
+#    commands:
+#      - pip install -e .
+#      - pytest -k e2e /tests
+
+#  approval:
+#   image: alpine:3.8
+#   title: deploy to production
+#   stage: approval
+#   commands:
+#   - sleep 300
+#   when:
+#     steps:
+#     - name: deployToProdNow
+#       on:
+#       - approved
+#
+# Below deployment has been verified with GKE
+  deploy:
     type: helm
     stage: deploy
-    working_directory: ./tim-ecp-flask
+    working_directory: ./${{CF_REPO_NAME}}
     arguments:
       action: install
-      chart_name: charts/tim-ecp-flask
-      release_name: tim-ecp-flask
+      chart_name: charts/${{CF_REPO_NAME}}
+      release_name: ${{CF_REPO_NAME}}
       helm_version: 3.0.2
-      kube_context: 'docker-desktop'
-#      custom_values:
-#      - 'buildID=${{CF_BUILD_ID}}'
-#      - 'image_pullPolicy=Always'
-##      - 'repository=r.cfcr.io/kostis-codefresh/my-flask-app'
-#      - 'repository=h.cfcr.io/elitecom/tim-ecp-flask'
-#      - 'image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
-#      - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'   
+      kube_context: ${{KUBE_CONTEXT}}
+      namespace: ${{NAMESPACE}}
+#     kube_context: devops-catalog@doc-cf-gke
+#     namespace: default
+      skip_cf_stable_helm_repo: true
+      chart_repo_url: ${{CHART_REPO_URL}}
+#     chart_repo_url: cm://h.cfcr.io/elitecom/default
+      custom_values:
+        - 'env_git__commit__sha=${{CF_SHORT_REVISION}}'
+        - 'image_pullPolicy=Always'
+        - 'image_tag=1.0.0'
+        - 'replicaCount=1'
+        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
+#          Obtain pullSecret from the Kubernetes Service deploy screen for the selected image
+      timeout: '300s'
+#     cmd_ps: '--wait --timeout 300s'
+##    when:
+##      branch:
+##        only: [master]
 
-#  store:
-#    title: Storing Helm Chart
-#    fail_fast: false
-#    type: helm
-#    stage: store
-#    working_directory: .
-#    arguments:
-#      action: push
-#      chart_name: charts/tim-ecp-flask
-#      kube_context: docker-desktop
-#      chart_repo_url: 'cm://h.cfcr.io/elitecom/default'
-#      #kube_context: my-demo-k8s-cluster
+# Below deployment has been verified with GKE
+# But, causes K8s to crash soon after,  25 Nov 2020
+# deploy_to_k8:
+#   title: K8s Deploy
+#   image: codefresh/cf-deploy-kubernetes:master
+#   commands:
+#     - /cf-deploy-kubernetes kubernetes/deployment.yaml
+#     - /cf-deploy-kubernetes kubernetes/service.yaml
+#   environment:
+#     - KUBECONTEXT=${{KUBE_CONTEXT}}
+#     - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+#     - PULL_SECRET=codefresh-generated-docker.io-dk-repos-default
 
-#  deploy:
-#    type: helm
-#    stage: deploy
-#    working_directory: .
-#    arguments:
-#      action: install
-#      chart_name: charts/tim-ecp-flask
-#      release_name: tim-ecp-flask
-#      helm_version: 3.0.2
-#      kube_context: docker-desktop
-##      custom_values:
-##        - 'buildID=${{CF_BUILD_ID}}'
-##        - 'image_pullPolicy=Always'
-##        - 'image_tag=multi-stage'
-##        - 'replicaCount=1'
-##        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
-
-  my_e2e_tests:
-    title: Running E2E tests
-    fail_fast: false
-    stage: e2e_test
-    image: '${{build_my_app}}'
-    commands:
-      - pip install -e .
-      - pytest -k e2e /tests
-
-  approval:
-   image: alpine:3.8
-   title: deploy to production
-   stage: approval
-   commands:
-   - sleep 300
-   when:
-     steps:
-     - name: deployToProdNow
-       on:
-       - approved
 
