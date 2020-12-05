@@ -12,4 +12,4 @@ services:
      - service_port=5000
      - log_level=INFO    
      - version=1.0.0
-     - git_commit_sha=93d9744
+     - git_commit_sha=ac72106

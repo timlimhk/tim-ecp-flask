@@ -128,24 +128,19 @@ steps:
       helm_version: 3.0.2
       kube_context: ${{KUBE_CONTEXT}}
       namespace: ${{NAMESPACE}}
-#     kube_context: devops-catalog@doc-cf-gke
-#     namespace: default
       skip_cf_stable_helm_repo: true
       chart_repo_url: ${{CHART_REPO_URL}}
-#     chart_repo_url: cm://h.cfcr.io/elitecom/default
       custom_values:
         - 'env_git__commit__sha=${{CF_SHORT_REVISION}}'
         - 'image_pullPolicy=Always'
         - 'image_tag=1.0.0'
         - 'replicaCount=1'
         - 'image_pullSecret=codefresh-generated-docker.io-dk-repos-default'
-#        - 'image_pullSecret=codefresh-generated-r.cfcr.io-cfcr-default'
-#          Obtain pullSecret from the Kubernetes Service deploy screen for the selected image
+# Obtain pullSecret from the Kubernetes Service deploy screen for the selected image
       timeout: '300s'
-#     cmd_ps: '--wait --timeout 300s'
-##    when:
-##      branch:
-##        only: [master]
+      when:
+        branch:
+          only: [master]
 
 # Below deployment has been verified with GKE
 # But, causes K8s to crash soon after,  25 Nov 2020
